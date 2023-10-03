@@ -12,26 +12,76 @@ public static class FunctionSolver{
   
   */
   
-  public string verifier(String equacao){
+  public Verification verifier(String equacao){
     String eqCopy = equacao;
-    String subEqL;
-    String subEqR;
     int parentesisOpenCounter = 0;
     int parentesisClosedCounter = 0;
+    int absoluteCounter = 0;
+    Verification operacoes = new Verification();
     for(int i = 0; i < eqCopy.lenght; i++){
       char c = eqCopy.charAt(i);
       if(c == '('){
         parentesisOpenCounter++;
+        if(!operacoes.gotPriority4()){
+          operacoes.setPriority4(true);
+        }
       }else if(c == ')'){
         parentesisClosedCounter++;
         if(parentesisOpenCounter == 0){
           //lançar erro
         }
-      }else if(this.isOperation(c)){
+        if(!operacoes.gotPriority4()){
+          operacoes.setPriority4(true);
+        }
+      }else if(c == '|'){
+        absoluteCounter++;
+        if(!operacoes.gotPriority3()){
+          operacoes.setPriority3(true);
+        }
+      }else if(c == '√'){
+        if(eqCopy.charAt(i+1) != '('){
+          return false;
+        }
+        if(!operacoes.gotPriority3()){
+          operacoes.setPriority3(true);
+        }
+      }else if(this.isPriority3(c)){
+        if(!operacoes.gotPriority3()){
+          operacoes.setPriority3(true);
+        }
+      }else if(this.isPriority2(c)){
+        if(!operacoes.gotPriority2()){
+          operacoes.setPriority2(true);
+        }
+      }else if(this.isPriority1(c)){
+        if(!operacoes.gotPriority1()){
+          operacoes.setPriority1(true);
+        }
+        if(parentesisOpenCounter - parentesisClosedCounter == 0){
+          if(absoluteCounter % 2 == 0){
+            operacoes.setFirstPriority1(i);
+          }
+        }
+      }
+    }
+    if(parentesisOpenCounter - parentesisClosedCounter != 0){
+      //lancar erro
+    }else if(absoluteCounter % 2 != 0){
+      //lancar erro
+    }
+    operacoes.setValid(true);
+    return operacoes;
+  }
+
+  public String solve(String equacao){
+    String eqCopy = equacao;
+    Verification verificacao = this.verify(eqCopy);
+    if(verificacao.isValid()){
+      if(verificacao.gotPriority1()){
         
       }
     }
-  }
+  }  
 
   private boolean isOperation(String c){
     if(isPriority3(c) || isPriority2(c) || isPriority1(c)){
