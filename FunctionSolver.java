@@ -1,4 +1,6 @@
-public static class FunctionSolver{
+import java.util.List;
+
+public class FunctionSolver{
 
   /*
   
@@ -12,55 +14,74 @@ public static class FunctionSolver{
   
   */
   
-  public Verification verifier(String equacao){
+  public Verification verify(String equacao){
     String eqCopy = equacao;
     int parentesisOpenCounter = 0;
     int parentesisClosedCounter = 0;
+    int
     int absoluteCounter = 0;
-    Verification operacoes = new Verification();
-    for(int i = 0; i < eqCopy.lenght; i++){
+    Verification verificacao = new Verification();
+    for(int i = 0; i < eqCopy.length(); i++){
       char c = eqCopy.charAt(i);
       if(c == '('){
-        parentesisOpenCounter++;
-        if(!operacoes.gotPriority4()){
-          operacoes.setPriority4(true);
+        verificacao.addParentesisOpen(i);
+        if(verificacao.getNumbersSize() % 2 != 0){
+          verificacao.addNumberPosition(i-1);
         }
       }else if(c == ')'){
-        parentesisClosedCounter++;
-        if(parentesisOpenCounter == 0){
-          //lançar erro
+        verificacao.addParentesisClosed(i);
+        if(verificacao.getNumbersSize() % 2 != 0){
+          verificacao.addNumberPosition(i-1);
         }
-        if(!operacoes.gotPriority4()){
-          operacoes.setPriority4(true);
+      }else if(c == '['){
+        verificacao.addBracketOpen(i);
+        if(verificacao.getNumbersSize() % 2 != 0){
+          verificacao.addNumberPosition(i-1);
         }
-      }else if(c == '|'){
-        absoluteCounter++;
-        if(!operacoes.gotPriority3()){
-          operacoes.setPriority3(true);
+      }else if(c == ']'){
+        verificacao.addBracketClosed(i);
+        if(verificacao.getNumbersSize() % 2 != 0){
+          verificacao.addNumberPosition(i-1);
         }
       }else if(c == '√'){
         if(eqCopy.charAt(i+1) != '('){
-          return false;
+          //lançar erro
         }
-        if(!operacoes.gotPriority3()){
-          operacoes.setPriority3(true);
+        if(!verificacao.gotPriority3()){
+          verificacao.setPriority3(true);
+        }
+        if(verificacao.getNumbersSize() % 2 != 0){
+          verificacao.addNumberPosition(i-1);
         }
       }else if(this.isPriority3(c)){
-        if(!operacoes.gotPriority3()){
-          operacoes.setPriority3(true);
+        if(!verificacao.gotPriority3()){
+          verificacao.setPriority3(true);
+        }
+        if(verificacao.getNumbersSize() % 2 != 0){
+          verificacao.addNumberPosition(i-1);
         }
       }else if(this.isPriority2(c)){
-        if(!operacoes.gotPriority2()){
-          operacoes.setPriority2(true);
+        if(!verificacao.gotPriority2()){
+          verificacao.setPriority2(true);
+        }
+        if(verificacao.getNumbersSize() % 2 != 0){
+          verificacao.addNumberPosition(i-1);
         }
       }else if(this.isPriority1(c)){
-        if(!operacoes.gotPriority1()){
-          operacoes.setPriority1(true);
+        if(!verificacao.gotPriority1()){
+          verificacao.setPriority1(true);
         }
         if(parentesisOpenCounter - parentesisClosedCounter == 0){
           if(absoluteCounter % 2 == 0){
-            operacoes.setFirstPriority1(i);
+            verificacao.setFirstPriority1(i);
           }
+        }
+        if(verificacao.getNumbersSize() % 2 != 0){
+          verificacao.addNumberPosition(i-1);
+        }
+      }else if(this.isNumber(c)){
+        if(verificacao.getNumbersSize() % 2 == 0){
+          verificacao.addNumberPosition(i);
         }
       }
     }
@@ -69,22 +90,82 @@ public static class FunctionSolver{
     }else if(absoluteCounter % 2 != 0){
       //lancar erro
     }
-    operacoes.setValid(true);
-    return operacoes;
+    verificacao.setValid(true);
+    return verificacao;
   }
 
-  public String solve(String equacao){
+  public double solve(String equacao){
     String eqCopy = equacao;
     Verification verificacao = this.verify(eqCopy);
     if(verificacao.isValid()){
-      if(verificacao.gotPriority1()){
-        
+      if(verificacao.getNumbersAmount() == 1){
+        int numberPosition = verificacao.getNumbersSize()-1;
+        if(verificacao.getNumbers().get(numberPosition) == eqCopy.length()-1){
+          if(verificacao.getNumbers().get(numberPosition - 1) == 0){
+            return Double.parseDouble(eqCopy);
+          }else if(verificacao.getNumbers().get(numberPosition - 1) == 1){
+            double number = Double.parseDouble(eqCopy.substring(verificacao.getNumbers().get(numberPosition - 1)));
+            if(verificacao.gotPriority1()){
+              char op = eqCopy.charAt(verificacao.getFirstPriority1());
+              if(verificacao.getFirstPriority1() == 0){
+                switch (op){
+                  case '+':
+                    return number;
+                  case '-':
+                    return -number;
+                  default:
+                    //lançar erro
+                }
+              }
+            }
+          }
+        }
+      }else{
+        char op;
+        double resultLeft, resultRight;
+        if(verificacao.gotPriority1()){
+          op = eqCopy.charAt(verificacao.getFirstPriority1());
+          resultLeft = this.solve(eqCopy.substring(0, verificacao.getFirstPriority1()-1));
+          resultRight = this.solve(eqCopy.substring(verificacao.getFirstPriority1()+1, eqCopy.length()-1));
+          switch (op){
+            case '+':
+              return resultLeft + resultRight;
+            case '-':
+              return resultLeft - resultRight;
+            default:
+              //lançar erro
+          }
+        }else if(verificacao.gotPriority2()){
+          op = eqCopy.charAt(verificacao.getFirstPriority1());
+          resultLeft = this.solve(eqCopy.substring(0, verificacao.getFirstPriority1()-1));
+          resultRight = this.solve(eqCopy.substring(verificacao.getFirstPriority1()+1, eqCopy.length()-1));
+          switch (op){
+            case '*':
+              return resultLeft * resultRight;
+            case '/':
+              return resultLeft / resultRight;
+            default:
+              //lançar erro
+          }
+        }else if(verificacao.gotPriority3()){
+          op = eqCopy.charAt(verificacao.getFirstPriority1());
+          resultLeft = this.solve(eqCopy.substring(0, verificacao.getFirstPriority1()-1));
+          resultRight = this.solve(eqCopy.substring(verificacao.getFirstPriority1()+1, eqCopy.length()-1));
+          switch (op){
+            case '*':
+              return resultLeft * resultRight;
+            case '/':
+              return resultLeft / resultRight;
+            default:
+              //lançar erro
+          }
+        }
       }
     }
   }  
 
-  private boolean isOperation(String c){
-    if(isPriority3(c) || isPriority2(c) || isPriority1(c)){
+  private boolean isOperation(char c){
+    if(this.isPriority3(c) || this.isPriority2(c) || this.isPriority1(c)){
       return true;
     }else{
       return false;
@@ -120,6 +201,24 @@ public static class FunctionSolver{
       return true;
     }else{
       return false;
+    }
+  }
+
+  private boolean isNumber(char c){
+    switch (c){
+      case '1':
+      case '2':
+      case '3':
+      case '4':
+      case '5':
+      case '6':
+      case '7':
+      case '8':
+      case '9':
+      case '0':
+        return true;
+      default:
+        return false;
     }
   }
 }
