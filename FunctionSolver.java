@@ -16,10 +16,6 @@ public class FunctionSolver{
   
   public Verification verify(String equacao){
     String eqCopy = equacao;
-    int parentesisOpenCounter = 0;
-    int parentesisClosedCounter = 0;
-    int
-    int absoluteCounter = 0;
     Verification verificacao = new Verification();
     for(int i = 0; i < eqCopy.length(); i++){
       char c = eqCopy.charAt(i);
@@ -49,6 +45,7 @@ public class FunctionSolver{
         }
         if(!verificacao.gotPriority3()){
           verificacao.setPriority3(true);
+          verificacao.setFirstPriority3(i);
         }
         if(verificacao.getNumbersSize() % 2 != 0){
           verificacao.addNumberPosition(i-1);
@@ -71,10 +68,8 @@ public class FunctionSolver{
         if(!verificacao.gotPriority1()){
           verificacao.setPriority1(true);
         }
-        if(parentesisOpenCounter - parentesisClosedCounter == 0){
-          if(absoluteCounter % 2 == 0){
-            verificacao.setFirstPriority1(i);
-          }
+        if(verificacao.noOpenBrackets()){
+          verificacao.setFirstPriority1(i);
         }
         if(verificacao.getNumbersSize() % 2 != 0){
           verificacao.addNumberPosition(i-1);
@@ -85,9 +80,7 @@ public class FunctionSolver{
         }
       }
     }
-    if(parentesisOpenCounter - parentesisClosedCounter != 0){
-      //lancar erro
-    }else if(absoluteCounter % 2 != 0){
+    if(!verificacao.noOpenBrackets()){
       //lancar erro
     }
     verificacao.setValid(true);
