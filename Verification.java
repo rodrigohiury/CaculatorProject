@@ -64,7 +64,65 @@ public class Verification{
     return parentesis;
   }
 
-  public List<BracketsPairs> getPipes() {
+  public BracketsPairs getParentesisOpenAt(int p){
+    for (BracketsPairs parentese : this.parentesis) {
+      if(parentese.getPositionOpen() == p){
+        return parentese;
+      }
+    }
+    return null;
+  }
+
+  public BracketsPairs getBracketOpenAt(int p){
+    for (BracketsPairs bracket : this.brackets) {
+      if(bracket.getPositionOpen() == p){
+        return bracket;
+      }
+    }
+    return null;
+  }
+
+  public BracketsPairs getParentesisClosedAt(int p){
+    for (BracketsPairs parentese : this.parentesis) {
+      if(parentese.getPositionClosed() == p){
+        return parentese;
+      }
+    }
+    return null;
+  }
+
+  public BracketsPairs getBracketClosedAt(int p){
+    for (BracketsPairs bracket : this.brackets) {
+      if(bracket.getPositionClosed() == p){
+        return bracket;
+      }
+    }
+    return null;
+  }
+
+  public BracketsPairs getParentesisAt(int p){
+    for (BracketsPairs parentese : this.parentesis) {
+      if(parentese.getPositionOpen() == p){
+        return parentese;
+      }else if(parentese.getPositionClosed() == p){
+        return parentese;
+      }
+    }
+    return null;
+  }
+
+  public BracketsPairs getBracketAt(int p){
+    for (BracketsPairs bracket : this.brackets) {
+      if(bracket.getPositionOpen() == p){
+        return bracket;
+      }else if(bracket.getPositionClosed() == p){
+        return bracket;
+      }
+    }
+    return null;
+  }
+
+  public List<BracketsPairs> getBrackets() {
     return brackets;
   }
 
@@ -183,6 +241,20 @@ public class Verification{
     if(!added){
       //lançar erro
     }
+  }
+
+  public boolean noOpenBrackets(){
+    for (BracketsPairs parentese : this.parentesis) {
+      if(parentese.getPositionClosed() == -1){
+        return false;
+      }
+    }
+    for (BracketsPairs bracket : this.brackets) {
+      if(bracket.getPositionClosed() == -1){
+        return false;
+      }
+    }
+    return true;
   }
   
 }
