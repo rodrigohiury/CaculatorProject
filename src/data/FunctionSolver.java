@@ -1,20 +1,32 @@
+package src.data;
+
 import java.util.List;
 
+import src.exceptions.EquationInvalid;
+
+/**
+ * Classe principal, responsável por verificar e calcular a equação fornecida
+ * 
+ * @author Rodrigo Hiury
+ * @version 1.0.0
+ */
 public class FunctionSolver{
 
-  /*
+  /**
+   * Verifica se a equação dada é válida e executa um escaneamento da equação.
+   * <p>
+   * Equação é válida se os parênteses estão todos fechados, 
+   * e se as operações dadas na equação são da forma (E ° E)
+   * para as operações de Soma, Subtração, Multiplicação, Divisão e Expoencial.
+   * Ou (° E) para as operações de Raíz quadrada, Módulo e Valor Negativo.
+   * Sendo E um número real ou uma subequação.
+   * 
+   * @param equacao String da equação a ser verificada
+   * @return Objeto da Classe Verification com todas as informações relevantes da equação
+   * @throws EquationInvalid quando a equação não respeita a formatação exigida
+   */
   
-  Verifica se a equação dada é válida.
-  Se os parênteses estão todos fechados,
-  e se as operações dadas na equação são da forma (E ° E)
-  para as operações de Soma, Subtração, Multiplicação,
-  Divisão e Expoencial. Ou (° E) para as operações de
-  Raíz quadrada, Módulo e Valor Negativo.
-  Sendo E um número real ou uma subequação.
-  
-  */
-  
-  public Verification verify(String equacao){
+  public Verification verify(String equacao) throws EquationInvalid{
     String eqCopy = equacao;
     Verification verificacao = new Verification();
     for(int i = 0; i < eqCopy.length(); i++){
@@ -41,7 +53,9 @@ public class FunctionSolver{
         }
       }else if(c == '√'){
         if(eqCopy.charAt(i+1) != '('){
-          //lançar erro
+          if(!verificacao.existNumberStartingAt(i)){
+            throw new EquationInvalid("Raíz não delimidata");
+          }
         }
         if(!verificacao.gotPriority3()){
           verificacao.setPriority3(true);
@@ -86,6 +100,13 @@ public class FunctionSolver{
     verificacao.setValid(true);
     return verificacao;
   }
+
+  /**
+   * Método que resolve a equação dada.
+   * 
+   * @param equacao String da equação a ser resolvida
+   * @return valor do tipo double do resultado da equação
+   */
 
   public double solve(String equacao){
     String eqCopy = equacao;
@@ -157,6 +178,13 @@ public class FunctionSolver{
     }
   }  
 
+  /**
+   * Verifica se o caractere c é um caractere de operação
+   * 
+   * @param c charactere a ser analisado
+   * @return boolean com a informação se c é um caractere de operação
+   */
+
   private boolean isOperation(char c){
     if(this.isPriority3(c) || this.isPriority2(c) || this.isPriority1(c)){
       return true;
@@ -165,6 +193,13 @@ public class FunctionSolver{
     }
   }
 
+  /**
+   * Verifica se o caractere c é um caractere de operação de prioridade 4
+   * 
+   * @param c charactere a ser analisado
+   * @return boolean com a informação se c é um caractere de operação de prioridade 4
+   * @see Verification
+   */
   private boolean isPriority4(char c){
     if(c == '(' || c == ')'){
       return true;
@@ -172,6 +207,14 @@ public class FunctionSolver{
       return false;
     }
   }
+
+  /**
+   * Verifica se o caractere c é um caractere de operação de prioridade 3
+   * 
+   * @param c charactere a ser analisado
+   * @return boolean com a informação se c é um caractere de operação de prioridade 3
+   * @see Verification
+   */
 
   private boolean isPriority3(char c){
     if(c == '|' || c == '√' || c == '^'){
@@ -181,6 +224,14 @@ public class FunctionSolver{
     }
   }
 
+  /**
+   * Verifica se o caractere c é um caractere de operação de prioridade 2
+   * 
+   * @param c charactere a ser analisado
+   * @return boolean com a informação se c é um caractere de operação de prioridade 2
+   * @see Verification
+   */
+
   private boolean isPriority2(char c){
     if(c=='*' || c == '/'){
       return true;
@@ -188,6 +239,14 @@ public class FunctionSolver{
       return false;
     }
   }
+
+  /**
+   * Verifica se o caractere c é um caractere de operação de prioridade 1
+   * 
+   * @param c charactere a ser analisado
+   * @return boolean com a informação se c é um caractere de operação de prioridade 1
+   * @see Verification
+   */
 
   private boolean isPriority1(char c){
     if(c == '+' || c == '-'){
@@ -197,6 +256,12 @@ public class FunctionSolver{
     }
   }
 
+  /**
+   * Verifica se o caractere c é um número
+   * @param c caractere a ser analisado
+   * @return boolean com a informação se c é um caractere de um número
+   */
+  
   private boolean isNumber(char c){
     switch (c){
       case '1':

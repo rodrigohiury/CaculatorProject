@@ -1,5 +1,15 @@
+package src.data;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import src.exceptions.EquationInvalid;
+
+/**
+ * Classe que guarda todas as informações relevantes de uma dada equação.
+ * @author Rodrigo Hiury
+ * @version 1.0.0
+ */
 
 public class Verification{
   private boolean priority4; //Parentesis
@@ -207,7 +217,7 @@ public class Verification{
     }
   }
 
-  public void addParentesisClosed(int p){
+  public void addParentesisClosed(int p) throws EquationInvalid{
     boolean added = false;
     for (int i = this.parentesis.size()-1 ; i > 0 ; i--) {
       if(this.parentesis.get(i).getPositionClosed() != -1){
@@ -216,7 +226,7 @@ public class Verification{
       }
     }
     if(!added){
-      //lançar erro
+      throw new EquationInvalid("Parentese não fechado!");
     }
   }
 
@@ -230,7 +240,7 @@ public class Verification{
     }
   }
 
-  public void addBracketClosed(int p){
+  public void addBracketClosed(int p) throws EquationInvalid{
     boolean added = false;
     for (int i = this.brackets.size()-1 ; i > 0 ; i--) {
       if(this.brackets.get(i).getPositionClosed() != -1){
@@ -239,7 +249,7 @@ public class Verification{
       }
     }
     if(!added){
-      //lançar erro
+      throw new EquationInvalid("Chave não fechada!");
     }
   }
 
@@ -255,6 +265,15 @@ public class Verification{
       }
     }
     return true;
+  }
+
+  public boolean existNumberStartingAt(int p){
+    for (int i = 0 ; i < this.numbers.size() ; i = i + 2) {
+      if(this.numbers.get(i) == p){
+        return true;
+      }
+    }
+    return false;
   }
   
 }

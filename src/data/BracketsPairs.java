@@ -1,3 +1,5 @@
+package src.data;
+
 public class BracketsPairs {
     
     private int positionOpen = -1;
