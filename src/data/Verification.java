@@ -3,7 +3,8 @@ package src.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import src.exceptions.EquationInvalid;
+import src.exceptions.FormatException;
+import src.exceptions.NoNumberException;
 
 /**
  * Classe que guarda todas as informações relevantes de uma dada equação.
@@ -217,7 +218,7 @@ public class Verification{
     }
   }
 
-  public void addParentesisClosed(int p) throws EquationInvalid{
+  public void addParentesisClosed(int p) throws FormatException{
     boolean added = false;
     for (int i = this.parentesis.size()-1 ; i > 0 ; i--) {
       if(this.parentesis.get(i).getPositionClosed() != -1){
@@ -226,7 +227,7 @@ public class Verification{
       }
     }
     if(!added){
-      throw new EquationInvalid("Parentese não fechado!");
+      throw new FormatException("Parentese não fechado!");
     }
   }
 
@@ -240,7 +241,7 @@ public class Verification{
     }
   }
 
-  public void addBracketClosed(int p) throws EquationInvalid{
+  public void addBracketClosed(int p) throws FormatException{
     boolean added = false;
     for (int i = this.brackets.size()-1 ; i > 0 ; i--) {
       if(this.brackets.get(i).getPositionClosed() != -1){
@@ -249,7 +250,7 @@ public class Verification{
       }
     }
     if(!added){
-      throw new EquationInvalid("Chave não fechada!");
+      throw new FormatException("Chave não fechada!");
     }
   }
 
@@ -275,5 +276,32 @@ public class Verification{
     }
     return false;
   }
+
+  public int getNumberEndPosition(int p) throws NoNumberException{
+    if(numbers != null){
+      for (int i = 0 ; i < this.numbers.size() ; i = i + 2) {
+        if(this.numbers.get(i) == p){
+          return this.numbers.get(i+1);
+        }
+      }
+      return -1;
+    }else{
+      throw new NoNumberException();
+    }
+    
+  }
   
+  public int getNumberBegginingPosition(int p) throws NoNumberException{
+    if(numbers != null){
+      for (int i = 1 ; i < this.numbers.size() ; i = i + 2) {
+        if(this.numbers.get(i) == p){
+          return this.numbers.get(i+1);
+        }
+      }
+      return -1;
+    }else{
+      throw new NoNumberException();
+    }
+    
+  }
 }

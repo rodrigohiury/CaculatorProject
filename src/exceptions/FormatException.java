@@ -2,12 +2,12 @@ package src.exceptions;
 
 import java.lang.Exception;
 
-public class EquationInvalid extends Exception{
+public class FormatException extends Exception{
 
     String motivo;
 
-    public EquationInvalid(String motivo){
-        super("Equação dada não é válida!");
+    public FormatException(String motivo){
+        super("Erro de Formatação!");
         this.motivo = motivo;
     }
 
