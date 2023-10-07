@@ -1,7 +1,5 @@
 package src.data;
 
-import java.util.List;
-
 import src.exceptions.*;
 
 /**
