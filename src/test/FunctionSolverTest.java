@@ -118,4 +118,22 @@ public class FunctionSolverTest {
         equacao = "√([-23]+(11)^(2))";
         assertEquals(12, calculadora.solve(equacao), 0.0001d);
     }
+
+    @Test
+    public void powerOfSquareRoot() throws MathException, FormatException, NoNumberException, ProcessingException{
+        equacao = "2^√4";
+        assertEquals(4, calculadora.solve(equacao), 0.000001d);
+    }
+
+    @Test
+    public void squareRootAndSum() throws MathException, FormatException, NoNumberException, ProcessingException{
+        equacao = "√4+2";
+        assertEquals(4, calculadora.solve(equacao), 0.000001d);
+    }
+
+    @Test
+    public void mediumFunction() throws MathException, FormatException, NoNumberException, ProcessingException{
+        equacao = "[(2^√4)^[-5^2]]";
+        assertEquals(1.125899906842624E15, calculadora.solve(equacao), 0.0001d);
+    }
 }

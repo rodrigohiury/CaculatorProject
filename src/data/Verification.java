@@ -25,6 +25,7 @@ public class Verification{
   private List<Integer> numbers = new ArrayList<>();
   private List<BracketsPairs> parentesis = new ArrayList<>();
   private List<BracketsPairs> brackets = new ArrayList<>();
+  private List<BracketsPairs> invisibleBracket = new ArrayList<>();
 
 
   public boolean gotPriority4(){
@@ -267,7 +268,7 @@ public class Verification{
         return false;
       }
     }
-    return true;
+    return !this.existInvisibleBracketOpen();
   }
 
   public boolean existNumberStartingAt(int p){
@@ -310,4 +311,57 @@ public class Verification{
   public boolean gotAnyPriority(){
     return (this.gotPriority1() || this.gotPriority2() || this.gotPriority3() || this.gotPriority4());
   }
+
+  public int getInvisibleBracketOpenAt(int p) {
+    for (BracketsPairs invisible : invisibleBracket) {
+      if(invisible.getPositionOpen() == p){
+        return invisible.getPositionClosed();
+      }
+    }
+    return -1;
+  }
+
+  public int getInvisibleBracketClosedAt(int p) {
+    for (BracketsPairs invisible : invisibleBracket) {
+      if(invisible.getPositionClosed() == p){
+        return invisible.getPositionOpen();
+      }
+    }
+    return -1;
+  }
+
+  public boolean existInvisibleBracketOpen(){
+    if(!invisibleBracket.isEmpty()){
+      for (BracketsPairs invisible : invisibleBracket) {
+        if(invisible.getPositionClosed() == -1){
+          return true;
+        }
+      }
+      return false;
+    }else{
+      return false;
+    }
+  }
+
+  public void addInvisibleBracketOpen(int p) {
+    BracketsPairs bracket = new BracketsPairs();
+    bracket.setPositionOpen(p);
+    this.invisibleBracket.add(bracket);
+  }
+
+  public void closeInvisibleBracket(int p) throws FormatException{
+    boolean added = false;
+    for (BracketsPairs bracket : invisibleBracket) {
+      if(bracket.getPositionClosed() == -1){
+        bracket.setPositionClosed(p);
+        added = true;
+        break;
+      }
+    }
+    if(!added){
+      throw new FormatException("Erro de Formatação!");
+    }
+  }
+
+  
 }

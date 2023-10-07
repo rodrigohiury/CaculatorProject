@@ -47,6 +47,9 @@ public class FunctionSolver{
         if(verificacao.getNumbersSize() % 2 != 0){
           verificacao.addNumberPosition(i-1);
         }
+        if(verificacao.existInvisibleBracketOpen()){
+          verificacao.closeInvisibleBracket(i);
+        }
       }else if(c == '['){
         if(verificacao.noOpenBrackets()){
           if(!verificacao.gotPriority3()){
@@ -63,6 +66,9 @@ public class FunctionSolver{
         if(verificacao.getNumbersSize() % 2 != 0){
           verificacao.addNumberPosition(i-1);
         }
+        if(verificacao.existInvisibleBracketOpen()){
+          verificacao.closeInvisibleBracket(i);
+        }
       }else if(c == '√'){
         if(eqCopy.charAt(i+1) != '('){
           if(!this.isNumber(eqCopy.charAt(i+1))){
@@ -78,35 +84,39 @@ public class FunctionSolver{
         if(verificacao.getNumbersSize() % 2 != 0){
           verificacao.addNumberPosition(i-1);
         }
-      }else if(this.isPriority3(c)){
-        if(verificacao.noOpenBrackets()){
-          if(!verificacao.gotPriority3()){
-            verificacao.setPriority3(true);
-            verificacao.setFirstPriority3(i);
-          }
-        }
+      }else if(c == '^'){
         if(verificacao.getNumbersSize() % 2 != 0){
           verificacao.addNumberPosition(i-1);
+          if(verificacao.existInvisibleBracketOpen()){
+            verificacao.closeInvisibleBracket(i);
+          }
+        }
+        if(verificacao.noOpenBrackets()){
+          verificacao.setPriority3(true);
+          verificacao.setFirstPriority3(i);
+          verificacao.addInvisibleBracketOpen(i+1);
         }
       }else if(this.isPriority2(c)){
         if(verificacao.noOpenBrackets()){
-          if(!verificacao.gotPriority2()){
-            verificacao.setPriority2(true);
-            verificacao.setFirstPriority2(i);
-          }
+          verificacao.setPriority2(true);
+          verificacao.setFirstPriority2(i);
         }
         if(verificacao.getNumbersSize() % 2 != 0){
           verificacao.addNumberPosition(i-1);
+          if(verificacao.existInvisibleBracketOpen()){
+            verificacao.closeInvisibleBracket(i);
+          }
         }
       }else if(this.isPriority1(c)){
         if(verificacao.noOpenBrackets()){
-          if(!verificacao.gotPriority1()){
-            verificacao.setPriority1(true);
-            verificacao.setFirstPriority1(i);
-          }
+          verificacao.setPriority1(true);
+          verificacao.setFirstPriority1(i);
         }
         if(verificacao.getNumbersSize() % 2 != 0){
           verificacao.addNumberPosition(i-1);
+          if(verificacao.existInvisibleBracketOpen()){
+            verificacao.closeInvisibleBracket(i);
+          }
         }
       }else if(this.isNumber(c)){
         if(verificacao.getNumbersSize() % 2 == 0){
@@ -114,11 +124,14 @@ public class FunctionSolver{
         }
       }
     }
-    if(!verificacao.noOpenBrackets()){
-      throw new FormatException("Chave/Parêntese não pareado!");
-    }
     if(verificacao.getNumbersSize() % 2 != 0){
       verificacao.addNumberPosition(eqCopy.length()-1);
+      if(verificacao.existInvisibleBracketOpen()){
+        verificacao.closeInvisibleBracket(eqCopy.length()-1);
+      }
+    }
+    if(!verificacao.noOpenBrackets()){
+      throw new FormatException("Chave/Parêntese não pareado!");
     }
     verificacao.setValid(true);
     return verificacao;
@@ -201,10 +214,19 @@ public class FunctionSolver{
         char op;
         double resultLeft, resultRight;
         if(verificacao.gotPriority1()){
+          op = eqCopy.charAt(verificacao.getFirstPriority1());
           if(verificacao.getFirstPriority1() == eqCopy.length() - 1){
             throw new FormatException("Ordenação errada de operador!");
+          }else if(verificacao.getFirstPriority1() == 0){
+            switch (op) {
+              case '+':
+                return this.solve(eqCopy.substring(verificacao.getFirstPriority1()+1));
+              case '-':
+                return -this.solve(eqCopy.substring(verificacao.getFirstPriority1()+1));
+              default:
+                throw new FormatException("Operador não Permitido!");
+            }
           }
-          op = eqCopy.charAt(verificacao.getFirstPriority1());
           resultLeft = this.solve(eqCopy.substring(0, verificacao.getFirstPriority1()));
           resultRight = this.solve(eqCopy.substring(verificacao.getFirstPriority1()+1, eqCopy.length()));
           switch (op){
@@ -262,7 +284,7 @@ public class FunctionSolver{
               if(subEquationEnd == -1){
                 throw new FormatException("Erro de Formatação!");
               }
-              resultLeft = this.solve(eqCopy.substring(verificacao.getFirstPriority3(), subEquationEnd));
+              resultLeft = this.solve(eqCopy.substring(verificacao.getFirstPriority3()+1, subEquationEnd));
               return Math.abs(resultLeft);
             case ']':
               throw new FormatException("Chave não pareada!");
@@ -273,7 +295,11 @@ public class FunctionSolver{
                 if(parentesis == null){
                   subEquationEnd = verificacao.getNumberEndPosition(verificacao.getFirstPriority3()+1);
                   if(subEquationEnd == -1){
-                    throw new FormatException("Não foi possível achar expoente!");
+                    if(eqCopy.charAt(verificacao.getFirstPriority3()+1) != '√'){
+                      throw new FormatException("Não foi possível achar expoente!");
+                    }else{
+                      subEquationEnd = verificacao.getInvisibleBracketOpenAt(verificacao.getFirstPriority3()+1);
+                    }
                   }
                 }else{
                   subEquationEnd = parentesis.getPositionClosed();
