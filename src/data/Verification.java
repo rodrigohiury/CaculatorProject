@@ -220,8 +220,8 @@ public class Verification{
 
   public void addParentesisClosed(int p) throws FormatException{
     boolean added = false;
-    for (int i = this.parentesis.size()-1 ; i > 0 ; i--) {
-      if(this.parentesis.get(i).getPositionClosed() != -1){
+    for (int i = this.parentesis.size()-1 ; i >= 0 ; i--) {
+      if(this.parentesis.get(i).getPositionClosed() == -1){
         this.parentesis.get(i).setPositionClosed(p);
         added = true;
       }
@@ -243,8 +243,8 @@ public class Verification{
 
   public void addBracketClosed(int p) throws FormatException{
     boolean added = false;
-    for (int i = this.brackets.size()-1 ; i > 0 ; i--) {
-      if(this.brackets.get(i).getPositionClosed() != -1){
+    for (int i = this.brackets.size()-1 ; i >= 0 ; i--) {
+      if(this.brackets.get(i).getPositionClosed() == -1){
         this.brackets.get(i).setPositionClosed(p);
         added = true;
       }
@@ -303,5 +303,9 @@ public class Verification{
       throw new NoNumberException();
     }
     
+  }
+
+  public boolean gotAnyPriority(){
+    return (this.gotPriority1() || this.gotPriority2() || this.gotPriority3() || this.gotPriority4());
   }
 }

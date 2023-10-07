@@ -70,4 +70,34 @@ public class FunctionSolverTest {
         equacao = "10/2";
         assertEquals(5, calculadora.solve(equacao), 0.00000001d);
     }
+
+    @Test
+    public void basicAbsoluteValue() throws MathException, FormatException, NoNumberException, ProcessingException{
+        equacao = "[-23]";
+        assertEquals(23, calculadora.solve(equacao), 0.0001d);
+    }
+
+    @Test
+    public void basicSquareRoot() throws MathException, FormatException, NoNumberException, ProcessingException{
+        equacao = "√(144)";
+        assertEquals(12, calculadora.solve(equacao), 0.0001d);
+    }
+
+    @Test
+    public void basicSquareRootNoParentesis() throws MathException, FormatException, NoNumberException, ProcessingException{
+        equacao = "√144";
+        assertEquals(12, calculadora.solve(equacao), 0.0001d);
+    }
+
+    @Test
+    public void basicPower() throws MathException, FormatException, NoNumberException, ProcessingException{
+        equacao = "(2)^(2)";
+        assertEquals(4, calculadora.solve(equacao), 0.00001d);
+    }
+
+    @Test
+    public void basicPowerNoParentesis() throws MathException, FormatException, NoNumberException, ProcessingException{
+        equacao = "2^2";
+        assertEquals(4, calculadora.solve(equacao), 0.00001d);
+    }
 }

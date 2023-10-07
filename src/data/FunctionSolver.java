@@ -32,13 +32,13 @@ public class FunctionSolver{
     for(int i = 0; i < eqCopy.length(); i++){
       char c = eqCopy.charAt(i);
       if(c == '('){
-        verificacao.addParentesisOpen(i);
         if(!verificacao.gotPriority4()){
           if(verificacao.noOpenBrackets()){
             verificacao.setPriority4(true);
             verificacao.setFirstPriority4(i);
           }
         }
+        verificacao.addParentesisOpen(i);
         if(verificacao.getNumbersSize() % 2 != 0){
           verificacao.addNumberPosition(i-1);
         }
@@ -48,13 +48,13 @@ public class FunctionSolver{
           verificacao.addNumberPosition(i-1);
         }
       }else if(c == '['){
-        verificacao.addBracketOpen(i);
         if(verificacao.noOpenBrackets()){
           if(verificacao.gotPriority3()){
             verificacao.setPriority3(true);
             verificacao.setFirstPriority3(i);
           }
         }
+        verificacao.addBracketOpen(i);
         if(verificacao.getNumbersSize() % 2 != 0){
           verificacao.addNumberPosition(i-1);
         }
@@ -139,9 +139,9 @@ public class FunctionSolver{
     String eqCopy = equacao;
     Verification verificacao = this.verify(eqCopy);
     if(verificacao.isValid()){
-      if(verificacao.getNumbersAmount() == 1){
+      if(verificacao.getNumbersAmount() == 1 && !verificacao.gotAnyPriority()){
         int numberPosition = verificacao.getNumbersSize()-1;
-        if(verificacao.getNumbers().get(numberPosition) == eqCopy.length()-1){
+        if(verificacao.getNumbers().get(numberPosition) == eqCopy.length()-1 ){
           if(verificacao.getNumbers().get(numberPosition - 1) == 0){
             return Double.parseDouble(eqCopy);
           }else if(verificacao.getNumbers().get(numberPosition - 1) == 1){
@@ -225,7 +225,7 @@ public class FunctionSolver{
               if(subEquationEnd == -1){
                 throw new FormatException("Erro de Formatação!");
               }
-              resultLeft = this.solve(eqCopy.substring(verificacao.getFirstPriority3()+1, subEquationEnd-1));
+              resultLeft = this.solve(eqCopy.substring(verificacao.getFirstPriority3(), subEquationEnd-1));
               return Math.abs(resultLeft);
             case ']':
               throw new FormatException("Chave não pareada!");
@@ -251,7 +251,7 @@ public class FunctionSolver{
                 }
               }
               resultLeft = this.solve(eqCopy.substring(subEquationBegginingLeft, verificacao.getFirstPriority3()));
-              resultRight = this.solve(eqCopy.substring(verificacao.getFirstPriority3(), subEquationEnd));
+              resultRight = this.solve(eqCopy.substring(verificacao.getFirstPriority3()+1, subEquationEnd));
               return Math.pow(resultLeft, resultRight);
             default:
               throw new FormatException("Erro de Formatação!");
