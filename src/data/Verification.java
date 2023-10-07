@@ -212,7 +212,7 @@ public class Verification{
     BracketsPairs parentese = new BracketsPairs();
     parentese.setPositionOpen(p);
     this.parentesis.add(parentese);
-    if(this.gotPriority4()){
+    if(!this.gotPriority4() && this.noOpenBrackets()){
       this.priority4 = true;
       this.firstPriority4 = p;
     }
@@ -224,6 +224,7 @@ public class Verification{
       if(this.parentesis.get(i).getPositionClosed() == -1){
         this.parentesis.get(i).setPositionClosed(p);
         added = true;
+        break;
       }
     }
     if(!added){
@@ -235,7 +236,7 @@ public class Verification{
     BracketsPairs bracket = new BracketsPairs();
     bracket.setPositionOpen(p);
     this.brackets.add(bracket);
-    if(this.gotPriority3()){
+    if(!this.gotPriority3() && this.noOpenBrackets()){
       this.priority3 = true;
       this.firstPriority3 = p;
     }
@@ -247,6 +248,7 @@ public class Verification{
       if(this.brackets.get(i).getPositionClosed() == -1){
         this.brackets.get(i).setPositionClosed(p);
         added = true;
+        break;
       }
     }
     if(!added){

@@ -100,4 +100,22 @@ public class FunctionSolverTest {
         equacao = "2^2";
         assertEquals(4, calculadora.solve(equacao), 0.00001d);
     }
+
+    @Test
+    public void basicFunctionChangedOrder() throws MathException, FormatException, NoNumberException, ProcessingException{
+        equacao = "(2+3)*5";
+        assertEquals(25, calculadora.solve(equacao), 0.00000001d);
+    }
+
+    @Test
+    public void operationsTogether() throws MathException, FormatException, NoNumberException, ProcessingException{
+        equacao = "√([-23]+(11)^(2))-5*2+3";
+        assertEquals(5, calculadora.solve(equacao), 0.0001d);
+    }
+
+    @Test
+    public void operationsTogetherSquareRoot() throws MathException, FormatException, NoNumberException, ProcessingException{
+        equacao = "√([-23]+(11)^(2))";
+        assertEquals(12, calculadora.solve(equacao), 0.0001d);
+    }
 }
