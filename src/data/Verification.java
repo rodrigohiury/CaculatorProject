@@ -234,7 +234,7 @@ public class Verification{
   public void addBracketOpen(int p){
     BracketsPairs bracket = new BracketsPairs();
     bracket.setPositionOpen(p);
-    this.parentesis.add(bracket);
+    this.brackets.add(bracket);
     if(this.gotPriority3()){
       this.priority3 = true;
       this.firstPriority3 = p;
@@ -295,7 +295,7 @@ public class Verification{
     if(numbers != null){
       for (int i = 1 ; i < this.numbers.size() ; i = i + 2) {
         if(this.numbers.get(i) == p){
-          return this.numbers.get(i+1);
+          return this.numbers.get(i-1);
         }
       }
       return -1;
