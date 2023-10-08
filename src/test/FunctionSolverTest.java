@@ -135,4 +135,10 @@ public class FunctionSolverTest {
         equacao = "[(2^√4)^[-5^2]]";
         assertEquals(1.125899906842624E15, calculadora.solve(equacao), 0.0001d);
     }
+
+    @Test
+    public void ambiguosFunction() throws MathException, FormatException, NoNumberException, ProcessingException{
+        equacao = "8/2*(2+2)";
+        assertEquals(16, calculadora.solve(equacao), 0.000001d);
+    }
 }
