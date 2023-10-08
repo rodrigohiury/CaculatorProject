@@ -149,6 +149,10 @@ public class FunctionSolver{
   public double solve(String equacao) throws MathException, FormatException, NoNumberException, ProcessingException{
     String eqCopy = equacao;
     Verification verificacao = this.verify(eqCopy);
+    BracketsPairs parentesis;
+    char op;
+    double resultLeft, resultRight;
+    int subEquationEnd, subEquationBeggining;
     if(verificacao.isValid()){
       if(verificacao.getNumbersAmount() == 1){
         if(!verificacao.gotAnyPriority()){
@@ -156,20 +160,19 @@ public class FunctionSolver{
         }else{
           if(verificacao.gotPriority1()){
             if(verificacao.getFirstPriority1() == 0){
-              char op = eqCopy.charAt(verificacao.getFirstPriority1());
-              double number = this.solve(eqCopy.substring(verificacao.getFirstPriority1()+1));
+              op = eqCopy.charAt(verificacao.getFirstPriority1());
+              resultLeft = this.solve(eqCopy.substring(verificacao.getFirstPriority1()+1));
               switch (op){
                 case '+':
-                  return number;
+                  return resultLeft;
                 case '-':
-                  return -number;
+                  return -resultLeft;
                 default:
                   throw new FormatException("Operador não permitido!");
               }
             }
           }else if(verificacao.gotPriority3()){
-            char op = eqCopy.charAt(verificacao.getFirstPriority3());
-            BracketsPairs parentesis;
+            op = eqCopy.charAt(verificacao.getFirstPriority3());
             switch (op) {
               case '√':
                 op = eqCopy.charAt(verificacao.getFirstPriority3()+1);
@@ -200,7 +203,7 @@ public class FunctionSolver{
                 throw new FormatException("Operação Binária com 1 número");
             }
           }else if(verificacao.gotPriority4()){
-            BracketsPairs parentesis = verificacao.getParentesisOpenAt(0);
+            parentesis = verificacao.getParentesisOpenAt(0);
             if(parentesis == null){
               throw new FormatException("Parêntese não pareado!");
             }
@@ -209,8 +212,6 @@ public class FunctionSolver{
           }
         }
       }else{
-        char op;
-        double resultLeft, resultRight;
         if(verificacao.gotPriority1()){
           op = eqCopy.charAt(verificacao.getFirstPriority1());
           if(verificacao.getFirstPriority1() == eqCopy.length() - 1){
@@ -255,9 +256,6 @@ public class FunctionSolver{
           }
         }else if(verificacao.gotPriority3()){
           op = eqCopy.charAt(verificacao.getFirstPriority3());
-          BracketsPairs parentesis;
-          int subEquationEnd;
-          int subEquationBegginingLeft;
           switch (op){
             case '√':
               if (eqCopy.charAt(verificacao.getFirstPriority3()+1) != '('){
@@ -310,17 +308,17 @@ public class FunctionSolver{
               if(parentesis == null){
                 parentesis = verificacao.getBracketClosedAt(verificacao.getFirstPriority3()-1);
                 if(parentesis == null){
-                  subEquationBegginingLeft = verificacao.getNumberBegginingPosition(verificacao.getFirstPriority3()-1);
-                  if(subEquationBegginingLeft == -1){
+                  subEquationBeggining = verificacao.getNumberBegginingPosition(verificacao.getFirstPriority3()-1);
+                  if(subEquationBeggining == -1){
                     throw new FormatException("Não foi possível achar base!");
                   }
                 }else{
-                  subEquationBegginingLeft = parentesis.getPositionOpen();
+                  subEquationBeggining = parentesis.getPositionOpen();
                 }
               }else{
-                subEquationBegginingLeft = parentesis.getPositionOpen();
+                subEquationBeggining = parentesis.getPositionOpen();
               }
-              resultLeft = this.solve(eqCopy.substring(subEquationBegginingLeft, verificacao.getFirstPriority3()));
+              resultLeft = this.solve(eqCopy.substring(subEquationBeggining, verificacao.getFirstPriority3()));
               resultRight = this.solve(eqCopy.substring(verificacao.getFirstPriority3()+1, subEquationEnd+1));
               return Math.pow(resultLeft, resultRight);
             default:
@@ -328,13 +326,12 @@ public class FunctionSolver{
           }
           
         }else if(verificacao.gotPriority4()){
-          int parentesis = verificacao.getFirstPriority4();
-          op = eqCopy.charAt(parentesis);
-          int parentesisEnd;
+          subEquationBeggining = verificacao.getFirstPriority4();
+          op = eqCopy.charAt(subEquationBeggining);
           switch (op){
             case '(':
-              parentesisEnd = verificacao.getParentesisOpenAt(parentesis).getPositionClosed();
-              resultLeft = this.solve(eqCopy.substring(parentesis+1, parentesisEnd));
+              subEquationEnd = verificacao.getParentesisOpenAt(subEquationBeggining).getPositionClosed();
+              resultLeft = this.solve(eqCopy.substring(subEquationBeggining+1, subEquationEnd));
               return resultLeft;
             case ')':
               throw new FormatException("Parêntese não pareado!");
