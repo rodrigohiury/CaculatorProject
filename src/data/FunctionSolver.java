@@ -234,7 +234,7 @@ public class FunctionSolver{
             case '-':
               return resultLeft - resultRight;
             default:
-              //lançar erro
+              throw new FormatException("Operador não permitido!");
           }
         }else if(verificacao.gotPriority2()){
           if(verificacao.getFirstPriority2() == eqCopy.length() - 1){
@@ -252,7 +252,7 @@ public class FunctionSolver{
               }
               return resultLeft / resultRight;
             default:
-              //lançar erro
+              throw new FormatException("Operador não permitido!");
           }
         }else if(verificacao.gotPriority3()){
           op = eqCopy.charAt(verificacao.getFirstPriority3());
