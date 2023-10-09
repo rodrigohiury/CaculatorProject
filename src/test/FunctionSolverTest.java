@@ -1,6 +1,7 @@
 package src.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 import org.junit.Test;
 
@@ -140,5 +141,64 @@ public class FunctionSolverTest {
     public void ambiguosFunction() throws MathException, FormatException, NoNumberException, ProcessingException{
         equacao = "8/2*(2+2)";
         assertEquals(16, calculadora.solve(equacao), 0.000001d);
+    }
+
+    @Test
+    public void fluxFunction() throws MathException, FormatException, NoNumberException, ProcessingException{
+        equacao = "√(12*(0.049770)+19*(0.049770)^(2)+2*√(4*(0.049770)^(3)+7*(0.049770)^(2))*(2*(0.049770)^(2)+(0.049770)))+√(4*(0.049770)^(3)+7*(0.049770)^(2))+2*(0.049770)^(2)+(0.049770)";
+        assertEquals(1, calculadora.solve(equacao), 0.0001d);
+    }
+
+    @Test
+    public void rationalNumberPower() throws MathException, FormatException, NoNumberException, ProcessingException{
+        equacao = "16^(0.5)";
+        assertEquals(4, calculadora.solve(equacao), 0.00000001d);
+    }
+
+    @Test
+    public void squareRootOfNegativeNumber() throws MathException, FormatException, NoNumberException, ProcessingException{
+        equacao = "√(-36)";
+        assertThrows(MathException.class, () -> calculadora.solve(equacao));
+    }
+
+    @Test
+    public void multiplicationOneNumber(){
+        equacao = "*2";
+        assertThrows(FormatException.class, () -> calculadora.solve(equacao));
+    }
+
+    @Test
+    public void emptyEquation(){
+        equacao = "";
+        assertThrows(FormatException.class, () -> calculadora.solve(equacao));
+    }
+
+    @Test
+    public void nullEquation(){
+        assertThrows(NullPointerException.class, () -> calculadora.solve(equacao));
+    }
+
+    @Test
+    public void oddParentesisLeft(){
+        equacao = "((2+3)*5";
+        assertThrows(FormatException.class, () -> calculadora.solve(equacao));
+    }
+
+    @Test
+    public void oddParentesisRight(){
+        equacao = "(2+3)*5)";
+        assertThrows(FormatException.class, () -> calculadora.solve(equacao));
+    }
+
+    @Test
+    public void oddBracketLeft(){
+        equacao = "[3-6";
+        assertThrows(FormatException.class, () -> calculadora.solve(equacao));
+    }
+
+    @Test
+    public void oddBracketRight(){
+        equacao = "3-6]";
+        assertThrows(FormatException.class, () -> calculadora.solve(equacao));
     }
 }

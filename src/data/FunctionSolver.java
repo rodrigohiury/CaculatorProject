@@ -27,6 +27,9 @@ public class FunctionSolver{
   public Verification verify(String equacao) throws FormatException{
     String eqCopy = equacao;
     Verification verificacao = new Verification();
+    if(eqCopy.length() == 0){
+      throw new FormatException("Equação Vazia");
+    }
     for(int i = 0; i < eqCopy.length(); i++){
       char c = eqCopy.charAt(i);
       if(c == '('){
@@ -94,6 +97,9 @@ public class FunctionSolver{
           verificacao.setFirstPriority3(i);
           verificacao.addInvisibleBracketOpen(i+1);
         }
+        if(verificacao.getNumbersAmount() == 0){
+          throw new FormatException("Operação binária com 1 único número");
+        }
       }else if(this.isPriority2(c)){
         if(verificacao.noOpenBrackets()){
           verificacao.setPriority2(true);
@@ -104,6 +110,9 @@ public class FunctionSolver{
           if(verificacao.existInvisibleBracketOpen()){
             verificacao.closeInvisibleBracket(i);
           }
+        }
+        if(verificacao.getNumbersAmount() == 0){
+          throw new FormatException("Operação binária com 1 único número");
         }
       }else if(this.isPriority1(c)){
         if(verificacao.noOpenBrackets()){
@@ -118,6 +127,9 @@ public class FunctionSolver{
         }
       }else if(this.isNumber(c)){
         if(verificacao.getNumbersSize() % 2 == 0){
+          if(c == '.'){
+            throw new FormatException("Número fracionário ilegal!");
+          }
           verificacao.addNumberPosition(i);
         }
       }
@@ -130,6 +142,11 @@ public class FunctionSolver{
     }
     if(!verificacao.noOpenBrackets()){
       throw new FormatException("Chave/Parêntese não pareado!");
+    }
+    if(verificacao.getNumbersAmount() <= 1){
+      if(verificacao.gotPriority2() || eqCopy.contains("^")){
+        throw new FormatException("Operação binária com 1 único número");
+      }
     }
     verificacao.setValid(true);
     return verificacao;
@@ -151,7 +168,7 @@ public class FunctionSolver{
     Verification verificacao = this.verify(eqCopy);
     BracketsPairs parentesis;
     char op;
-    double resultLeft, resultRight;
+    double resultLeft, resultRight, number;
     int subEquationEnd, subEquationBeggining;
     if(verificacao.isValid()){
       if(verificacao.getNumbersAmount() == 1){
@@ -181,7 +198,11 @@ public class FunctionSolver{
                   if(parentesis == null){
                     throw new FormatException("Parentese Não Pareado!");
                   }
-                  return Math.sqrt(this.solve(eqCopy.substring(verificacao.getFirstPriority3()+2, parentesis.getPositionClosed())));
+                  number = this.solve(eqCopy.substring(verificacao.getFirstPriority3()+2, parentesis.getPositionClosed()));
+                  if(number < 0){
+                    throw new MathException("Raíz de número complexo");
+                  }
+                  return Math.sqrt(number);
                 }else if(op == '['){
                   parentesis = verificacao.getBracketOpenAt(verificacao.getFirstPriority3()+1);
                   if(parentesis == null){
@@ -189,9 +210,17 @@ public class FunctionSolver{
                   }
                   return Math.sqrt(this.solve(eqCopy.substring(verificacao.getFirstPriority3()+1, parentesis.getPositionClosed()+1)));
                 }else if(this.isNumber(op)){
-                  return Math.sqrt(this.solve(eqCopy.substring(verificacao.getFirstPriority3()+1)));
+                  number = this.solve(eqCopy.substring(verificacao.getFirstPriority3()+1));
+                  if(number < 0){
+                    throw new MathException("Raíz de número complexo");
+                  }
+                  return Math.sqrt(number);
                 }else {
-                  return Math.sqrt(this.solve(eqCopy.substring(verificacao.getFirstPriority3()+1)));
+                  number = this.solve(eqCopy.substring(verificacao.getFirstPriority3()+1));
+                  if(number < 0){
+                    throw new MathException("Raíz de número complexo");
+                  }
+                  return Math.sqrt(number);
                 }
               case '[':
                 parentesis = verificacao.getBracketOpenAt(verificacao.getFirstPriority3());
@@ -267,6 +296,9 @@ public class FunctionSolver{
                   throw new FormatException("Erro de Formatação!");
                 }
                 resultLeft = this.solve(eqCopy.substring(verificacao.getFirstPriority3()+1, subEquationEnd+1));
+                if(resultLeft < 0){
+                  throw new MathException("Raíz de número complexo");
+                }
                 return Math.sqrt(resultLeft);
               }
               subEquationEnd = verificacao.getParentesisOpenAt(verificacao.getFirstPriority3()+1).getPositionClosed();
@@ -274,6 +306,9 @@ public class FunctionSolver{
                 throw new FormatException("Erro de Formatação!");
               }
               resultLeft = this.solve(eqCopy.substring(verificacao.getFirstPriority3()+1,subEquationEnd+1));
+              if(resultLeft < 0){
+                throw new MathException("Raíz de número complexo");
+              }
               return Math.sqrt(resultLeft);
             case '[':
               subEquationEnd = verificacao.getBracketOpenAt(verificacao.getFirstPriority3()).getPositionClosed();
@@ -440,6 +475,7 @@ public class FunctionSolver{
       case '8':
       case '9':
       case '0':
+      case '.':
         return true;
       default:
         return false;
