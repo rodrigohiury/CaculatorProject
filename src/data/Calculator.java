@@ -20,6 +20,7 @@ public class Calculator {
     private final double E = Math.E;                        // Constante de Euler
     private double memory;                                  // Variável de memória
     private FunctionSolver solver = new FunctionSolver();   // Classe FunctionSolver
+    private List<OperationHistory> history = new ArrayList<>(10);
 
     public double getPI() {
         return PI;
@@ -58,6 +59,31 @@ public class Calculator {
     public double functionSolve(String equation, double variable) throws MathException, FormatException, NoNumberException, ProcessingException{
         equation = equation.replace("X", "(" + variable + ")");
         return solver.solve(equation);
+    }
+
+    public double solve(String equation) throws MathException, FormatException, NoNumberException, ProcessingException{
+        return solver.solve(equation);
+    }
+
+    public OperationHistory getLatestHistory(){
+        if(history.size() > 0){
+            return history.get(history.size()-1);
+        }
+        return null;
+    }
+
+    public OperationHistory getHistory(int i){
+        if(i <= history.size()){
+            return history.get(history.size()-i);
+        }
+        return null;
+    }
+
+    public void addHistory(OperationHistory operation){
+        if(history.size() >= 10){
+            history.remove(0);
+        }
+        history.add(operation);
     }
     
 }

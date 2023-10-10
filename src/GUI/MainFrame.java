@@ -1,5 +1,6 @@
 package src.GUI;
 
+import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -77,16 +78,17 @@ public class MainFrame extends JFrame{
                 }
             }
         });
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 1;
+        gridBagConstraints.gridheight = 1;
+        contentPane.add(jBFunction, gridBagConstraints);
+        /*
         JButton jBSum = new JButton("+");
         jBSum.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e){
                 equation.append("+");
             }
         });
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.gridwidth = 1;
-        gridBagConstraints.gridheight = 1;
-        contentPane.add(jBFunction, gridBagConstraints);
         JButton jBSubtraction = new JButton("-");
         jBSubtraction.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e){
@@ -95,14 +97,13 @@ public class MainFrame extends JFrame{
         });
         gridBagConstraints.gridy = 4;
         contentPane.add(jBSubtraction, gridBagConstraints);
-        
+        */
         JButton jBRightArrow = new JButton("<");
         jBRightArrow.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e){
                 
             }
         });
-        gridBagConstraints.gridy = 3;
         gridBagConstraints.gridx = 1;
         contentPane.add(jBRightArrow, gridBagConstraints);
         JButton jBLeftArrow = new JButton(">");
@@ -124,6 +125,51 @@ public class MainFrame extends JFrame{
         });
         gridBagConstraints.gridx = 3;
         contentPane.add(jBDelete, gridBagConstraints);
+        JButton jBMemoryClear = new JButton("MC");
+        jBMemoryClear.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                calculator.clearMemory();
+            }
+        });
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridx = 0;
+        contentPane.add(jBMemoryClear, gridBagConstraints);
+        JButton jBMemoryRead = new JButton("MR");
+        jBMemoryRead.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                if(calculator.getMemory() != 0){
+                    equation.append(calculator.getMemory() + "");
+                }
+            }
+        });
+        gridBagConstraints.gridx = 1;
+        contentPane.add(jBMemoryRead, gridBagConstraints);
+        JButton jBMemoryAdd = new JButton("M+");
+        jBMemoryAdd.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                try {
+                    calculator.addMemory(calculator.solve(equation.getText()));
+                } catch (MathException | FormatException | NoNumberException | ProcessingException e1) {
+                    equation.setText("ERROR!");
+                    e1.printStackTrace();
+                }
+            }
+        });
+        gridBagConstraints.gridx = 2;
+        contentPane.add(jBMemoryAdd, gridBagConstraints);
+        JButton jBMemorySubtract = new JButton("M-");
+        jBMemorySubtract.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                try {
+                    calculator.addMemory(calculator.solve(equation.getText()));
+                } catch (MathException | FormatException | NoNumberException | ProcessingException e1) {
+                    equation.setText("ERROR!");
+                    e1.printStackTrace();
+                }
+            }
+        });
+        gridBagConstraints.gridx = 3;
+        contentPane.add(jBMemorySubtract, gridBagConstraints);
         add(contentPane);
         setVisible(true);
     }
